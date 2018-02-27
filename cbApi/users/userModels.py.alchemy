@@ -1,0 +1,57 @@
+from cbApi import db
+
+class Friend(db.Model):
+    _id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user._id'),nullable=False)
+
+class Name(db.Model):
+    _id = db.Column(db.Integer, primary_key = True)
+    first = db.Column(db.Text)
+    last = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user._id'),nullable=False)
+
+class Tag(db.Model):
+    _id = db.Column(db.Integer, db.ForeignKey('user._id'))
+    tag = db.Column(db.Text, primary_key = True)
+
+class Range(db.Model):
+    _id = db.Column(db.Integer, db.ForeignKey('user._id'))
+    tag = db.Column(db.Integer, primary_key = True)
+
+class User(db.Model):
+    _id = db.Column(db.Integer, primary_key = True)
+    balance = db.Column(db.Integer)
+    picture = db.Column(db.Text)
+    age = db.Column(db.Integer)
+    name =  db.relationship('Name',uselist = False, backref='user')
+    phone = db.Column(db.Integer)
+    address = db.Column(db.Text)
+    tags = db.relationship('Tag',uselist = True , backref='user')
+    _range = db.relationship('Range',uselist = True , backref='user')
+    friends  = db.relationship('Friend',uselist = True , backref='user')
+
+    def __eq__(self,o):
+        if self._id != o._id:
+            print "id mismatch"
+            return False
+	if self.balance != o.balance:
+            print "balance mismatch"
+            return False
+	if self.age != o.age:
+            print "age mismatch"
+            return False
+	if self.name['last'] != o.name['last']:
+            print "last name mismatch"
+            return False
+        if self.name['first'] != o.name['first']:
+            print "first name mismatch"
+            return False
+	if self.phone != o.phone:
+            print "phone mismatch"
+            return False
+	if self.address != o.address:
+            print "address mismatch"
+            return False
+	##TODO add remaining fields
+        return True

@@ -1,0 +1,61 @@
+from cbApi import db
+import peewee as pw
+
+class BaseModel(pw.Model):
+    """Base model class. All descendants share the same database."""
+    class Meta:
+        database = db
+class User(BaseModel):
+    _id = pw.IntegerField()
+    balance = pw.IntegerField()
+    picture = pw.CharField()
+    age = pw.IntegerField()
+    phone = pw.IntegerField()
+    address = pw.CharField()
+    #_range = pw.ForeignKeyField(Range,backref="user")
+    #tags = pw.ForeignKeyField(Tag,backref="user")
+    #name = pw.ForeignKeyField(Name,backref="user")
+    #friends  = pw.ForeignKeyField(Friend,backref="user")
+
+    def __eq__(self,o):
+        if self._id != o._id:
+            print "id mismatch"
+            return False
+        if self.balance != o.balance:
+            print "balance mismatch"
+            return False
+        if self.age != o.age:
+            print "age mismatch"
+            return False
+        if self.name['last'] != o.name['last']:
+            print "last name mismatch"
+            return False
+        if self.name['first'] != o.name['first']:
+            print "first name mismatch"
+            return False
+        if self.phone != o.phone:
+            print "phone mismatch"
+            return False
+        if self.address != o.address:
+            print "address mismatch"
+            return False
+        ##TODO add remaining fields
+        return True
+
+class Friend(BaseModel):
+    _id = pw.IntegerField(primary_key=True)
+    name = pw.CharField()
+    user = pw.ForeignKeyField(User,backref="friends")
+
+class Name(BaseModel):
+    first = pw.CharField()
+    last = pw.CharField()
+    user = pw.ForeignKeyField(User,backref="name")
+
+class Tag(BaseModel):
+    tag = pw.CharField(primary_key=True)
+    user = pw.ForeignKeyField(User,backref="tags")
+
+class Range(BaseModel):
+    _range = pw.IntegerField(primary_key=True)
+    user = pw.ForeignKeyField(User,backref="range")
