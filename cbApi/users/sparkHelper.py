@@ -1,32 +1,33 @@
-from pyspark.sql import SparkSession,Row
 from collections import OrderedDict
 
+from pyspark.sql import Row, functions
+from cbApi import apiSpark
 
-spark = SparkSession.builder \
-    .master('local') \
-    .appName('cbApi') \
-    .getOrCreate()
-    
+spark = apiSpark
+
 
 class UserTools():
 
-    def dataFrameFromListOfDicts(self,data):
-	row = self.convertToRows(data)
+
+    #TODO create unit test
+    def dataFrameFromListOfDicts(self, data):
+        row = self.convertToRows(data)
         df = spark.sparkContext.parallelize(row).toDF()
-        #df.show()
-        return df
+        df.show()
+        #TODO with column for names
+        #TODO sort
+        return df.collect()
 
-    def convertToRows(self,listOfDicts):
+    def convertToRows(self, listOfDicts):
         out = list()
-        for d in listOfDicts:
-	    out.append(Row(**OrderedDict(d.items())))
+        l = list()
+        if type(listOfDicts) is list:
+            l = listOfDicts
+        else:
+            l.append(listOfDicts)
+        for d in l:
+            out.append(Row(**OrderedDict(d.items())))
         return out
-
-    def dataFromeFromDict(self,data):
-        pass
-
-    def convetToRow(self,myDict):
-        pass
 
 
 if __name__ == '__main__':
@@ -35,11 +36,11 @@ if __name__ == '__main__':
     data['firstName'] = 'jeff'
     data['lastName'] = 'cappy'
     data['age'] = '27'
-    
+
     data2 = dict()
     data2['firstName'] = 'rox'
     data2['lastName'] = 'miller'
     data2['age'] = '29'
-    
-    l = [data,data2]
+
+    l = [data, data2]
     ut.dataFrameFromListOfDicts(l).show()

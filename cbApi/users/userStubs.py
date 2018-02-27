@@ -1,6 +1,6 @@
 class stubbedUser():
-  def singleUser(self):
-    return """{
+    def singleUser(self):
+        return """{
         "_id": 1,
         "balance": "$3,227.48",
         "picture": "http://placehold.it/32x32",
@@ -46,8 +46,9 @@ class stubbedUser():
         ],
         "favoriteFruit": "banana"
      }"""
-  def userList(self):
-    return """[
+
+    def userList(self):
+        return """[
   {
     "_id": 1,
     "isActive": false,

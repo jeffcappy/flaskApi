@@ -1,7 +1,9 @@
-from marshmallow import Schema, fields, pprint,pre_load,ValidationError,post_load
-from userModels import User, Friend, Name
+from marshmallow import Schema, fields, pre_load, ValidationError, post_load
 
-#Processsors
+from userModels import User
+
+
+# Processsors
 def cleanInt(string):
     string = str(string)
     clean = ''
@@ -9,6 +11,7 @@ def cleanInt(string):
         if digit.isdigit():
             clean = clean + digit
     return clean
+
 
 def parsePhone(phone):
     clean = cleanInt(phone)
@@ -18,18 +21,21 @@ def parsePhone(phone):
         raise ValidationError('Phone number must be 10 digits including area code')
     return int(clean)
 
+
 def parseBalance(balance):
     return cleanInt(balance)
 
 
-#SCHEMAS
+# SCHEMAS
 class FriendSchema(Schema):
     _id = fields.Integer()
     name = fields.Str()
 
+
 class NameSchema(Schema):
     first = fields.Str()
     last = fields.Str()
+
 
 class UserSchema(Schema):
     _id = fields.Integer()
@@ -44,11 +50,11 @@ class UserSchema(Schema):
     friends = fields.List(fields.Nested(FriendSchema))
 
     @pre_load
-    def clean_input(self,in_data):
+    def clean_input(self, in_data):
         try:
             in_data['phone'] = parsePhone(in_data['phone'])
         except ValidationError as err:
-            raise err 
+            raise err
         try:
             in_data['balance'] = parseBalance(in_data['balance'])
         except ValidationError as err:
